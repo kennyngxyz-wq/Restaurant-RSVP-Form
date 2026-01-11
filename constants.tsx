@@ -4,6 +4,7 @@ import { TimeSlot, QuickPreset } from './types';
 
 export const RESTAURANT_NAME = "L'Ambroisie Modern Bistro";
 export const RESTAURANT_WHATSAPP = "+60126875385";
+export const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwbkWWMe6dgNoKpXVECEikORVzBsc0-B57suwcWtSj_UsevSPJ2MzWxujXnDNI9afk/exec";
 
 export const LUNCH_SLOTS: TimeSlot[] = [
   { label: "12:00 PM", value: "12:00 PM" },

@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { ReservationData } from '../types';
-import { LUNCH_SLOTS, DINNER_SLOTS, QUICK_PRESETS } from '../constants';
+import { LUNCH_SLOTS, DINNER_SLOTS, WEBHOOK_URL } from '../constants';
 import { getTodayDateString, generateWhatsAppLink } from '../utils';
 
 const ReservationForm: React.FC = () => {
@@ -15,6 +15,7 @@ const ReservationForm: React.FC = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isValid = useMemo(() => {
     return formData.name.trim() !== '' && 
@@ -35,12 +36,42 @@ const ReservationForm: React.FC = () => {
     setFormData(prev => ({ ...prev, guests: count }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isValid) {
+    if (!isValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // 1. Post to Google Sheets via Webhook
+      // Note: We use 'no-cors' mode as Apps Script webhooks often return redirects which trigger CORS errors
+      // even if the data reaches the sheet.
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          submittedAt: new Date().toISOString()
+        }),
+      });
+
+      // 2. Open WhatsApp link
+      const link = generateWhatsAppLink(formData);
+      window.open(link, '_blank');
+      
+      // 3. Show success state
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Submission error:', error);
+      // Even if logging fails, we still allow the user to proceed to WhatsApp
       const link = generateWhatsAppLink(formData);
       window.open(link, '_blank');
       setIsSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -54,7 +85,8 @@ const ReservationForm: React.FC = () => {
         </div>
         <h2 className="text-3xl font-bold mb-4 serif text-gray-900">Request Sent!</h2>
         <p className="text-gray-600 mb-8 leading-relaxed">
-          We've prepared your WhatsApp message. Once you send it, our team will review your request and confirm your table shortly.
+          Your reservation details have been logged and your WhatsApp message is ready. 
+          Please ensure you send the message in WhatsApp to finalize your booking.
         </p>
         <button 
           onClick={() => setIsSubmitted(false)}
@@ -85,7 +117,8 @@ const ReservationForm: React.FC = () => {
               placeholder="John Doe"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all"
+              disabled={isSubmitting}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all disabled:opacity-50"
             />
           </div>
           <div className="space-y-2">
@@ -97,7 +130,8 @@ const ReservationForm: React.FC = () => {
               placeholder="+6012-3456789"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all"
+              disabled={isSubmitting}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all disabled:opacity-50"
             />
           </div>
         </div>
@@ -111,11 +145,12 @@ const ReservationForm: React.FC = () => {
                 key={num}
                 type="button"
                 onClick={() => handlePreset(num)}
+                disabled={isSubmitting}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   formData.guests === num 
                     ? 'bg-[#b49164] text-white shadow-md scale-105' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                } disabled:opacity-50`}
               >
                 {num} Guests
               </button>
@@ -127,7 +162,8 @@ const ReservationForm: React.FC = () => {
               max="20"
               value={formData.guests}
               onChange={handleChange}
-              className="w-20 px-3 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:bg-white"
+              disabled={isSubmitting}
+              className="w-20 px-3 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:bg-white disabled:opacity-50"
             />
           </div>
         </div>
@@ -143,7 +179,8 @@ const ReservationForm: React.FC = () => {
               min={getTodayDateString()}
               value={formData.date}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all"
+              disabled={isSubmitting}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all disabled:opacity-50"
             />
           </div>
           <div className="space-y-2">
@@ -153,7 +190,8 @@ const ReservationForm: React.FC = () => {
               required
               value={formData.time}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all appearance-none"
+              disabled={isSubmitting}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all appearance-none disabled:opacity-50"
             >
               <option value="">Select a time</option>
               <optgroup label="Lunch Service">
@@ -183,24 +221,37 @@ const ReservationForm: React.FC = () => {
             placeholder="Dietary restrictions, celebrations, or table preferences..."
             value={formData.requests}
             onChange={handleChange}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all resize-none"
+            disabled={isSubmitting}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all resize-none disabled:opacity-50"
           />
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={!isValid}
+          disabled={!isValid || isSubmitting}
           className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center space-x-3 transition-all ${
-            isValid 
+            isValid && !isSubmitting
               ? 'bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-lg hover:shadow-xl translate-y-0 active:translate-y-1' 
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
         >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.768-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.16-.173.348-.217.462-.217.116 0 .231.001.332.005.109.004.258-.041.404.311.145.352.506 1.231.55 1.318.044.087.073.188.015.304-.058.116-.087.188-.174.289-.087.101-.184.225-.262.302-.087.087-.178.182-.077.357.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.088.275.073.376-.044.101-.117.434-.506.55-.68.116-.174.232-.145.391-.087.16.058 1.013.478 1.187.565.173.088.289.13.332.202.043.073.043.419-.101.825zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.435 5.174L2 22l4.957-1.3c1.465.798 3.136 1.245 4.908 1.343.045.003.089.005.135.005 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
-          </svg>
-          <span>Reserve via WhatsApp</span>
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Processing...</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.768-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.16-.173.348-.217.462-.217.116 0 .231.001.332.005.109.004.258-.041.404.311.145.352.506 1.231.55 1.318.044.087.073.188.015.304-.058.116-.087.188-.174.289-.087.101-.184.225-.262.302-.087.087-.178.182-.077.357.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.088.275.073.376-.044.101-.117.434-.506.55-.68.116-.174.232-.145.391-.087.16.058 1.013.478 1.187.565.173.088.289.13.332.202.043.073.043.419-.101.825zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.435 5.174L2 22l4.957-1.3c1.465.798 3.136 1.245 4.908 1.343.045.003.089.005.135.005 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+              </svg>
+              <span>Reserve via WhatsApp</span>
+            </>
+          )}
         </button>
       </form>
     </div>
