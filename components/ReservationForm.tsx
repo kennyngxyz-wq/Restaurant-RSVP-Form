@@ -43,32 +43,18 @@ const ReservationForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // 1. Post to Google Sheets via Webhook
-      // Note: We use 'no-cors' mode as Apps Script webhooks often return redirects which trigger CORS errors
-      // even if the data reaches the sheet.
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          submittedAt: new Date().toISOString()
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, submittedAt: new Date().toISOString() }),
       });
-
-      // 2. Open WhatsApp link
       const link = generateWhatsAppLink(formData);
       window.open(link, '_blank');
-      
-      // 3. Show success state
       setIsSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
-      // Even if logging fails, we still allow the user to proceed to WhatsApp
-      const link = generateWhatsAppLink(formData);
-      window.open(link, '_blank');
+      window.open(generateWhatsAppLink(formData), '_blank');
       setIsSubmitted(true);
     } finally {
       setIsSubmitting(false);
@@ -77,101 +63,100 @@ const ReservationForm: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl text-center border border-gray-100 animate-in fade-in zoom-in duration-300">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      <div className="bg-white p-12 text-center border border-gray-100 shadow-2xl animate-in fade-in duration-500">
+        <div className="w-16 h-16 border-2 border-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-8">
+          <svg className="w-8 h-8 text-[#BC1E22]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-3xl font-bold mb-4 serif text-gray-900">Request Sent!</h2>
-        <p className="text-gray-600 mb-8 leading-relaxed">
-          Your reservation details have been logged and your WhatsApp message is ready. 
-          Please ensure you send the message in WhatsApp to finalize your booking.
+        <h2 className="text-3xl font-bold mb-4 luxury-heading text-[#1a1a1a]">Booking Initiated</h2>
+        <p className="text-gray-500 mb-10 max-w-sm mx-auto leading-relaxed">
+          Your reservation request has been processed. Please complete the booking by sending the pre-filled message on WhatsApp.
         </p>
         <button 
           onClick={() => setIsSubmitted(false)}
-          className="text-[#b49164] font-semibold hover:underline"
+          className="text-[#BC1E22] text-xs font-bold tracking-[0.2em] uppercase hover:underline"
         >
-          Make another reservation
+          New Reservation
         </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 md:p-10 rounded-3xl shadow-xl border border-gray-100">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 serif">Book Your Table</h2>
-        <p className="text-gray-500 mt-2">Experience the finest modern bistro dining.</p>
+    <div className="bg-white p-8 md:p-12 border border-gray-100 shadow-2xl">
+      <div className="mb-10 text-center relative">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 luxury-heading">Table Reservation</h2>
+        <div className="w-20 h-[2px] bg-[#BC1E22] mx-auto mt-4"></div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name and Phone */}
-        <div className="grid md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 block ml-1">Full Name</label>
+            <label className="text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400 block">Your Name</label>
             <input
               type="text"
               name="name"
               required
-              placeholder="John Doe"
+              placeholder="Full Name"
               value={formData.name}
               onChange={handleChange}
               disabled={isSubmitting}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all disabled:opacity-50"
+              className="w-full px-0 py-3 bg-transparent border-b border-gray-200 rounded-none focus:border-[#BC1E22] transition-all disabled:opacity-50 placeholder:text-gray-300"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 block ml-1">Phone Number</label>
+            <label className="text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400 block">Phone Number</label>
             <input
               type="tel"
               name="phone"
               required
-              placeholder="+6012-3456789"
+              placeholder="+60..."
               value={formData.phone}
               onChange={handleChange}
               disabled={isSubmitting}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all disabled:opacity-50"
+              className="w-full px-0 py-3 bg-transparent border-b border-gray-200 rounded-none focus:border-[#BC1E22] transition-all disabled:opacity-50 placeholder:text-gray-300"
             />
           </div>
         </div>
 
-        {/* Guests Quick Selection */}
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-gray-700 block ml-1">Number of Guests</label>
-          <div className="flex flex-wrap gap-2">
+          <label className="text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400 block">Party Size</label>
+          <div className="flex flex-wrap gap-4">
             {[2, 4, 6, 8, 10].map((num) => (
               <button
                 key={num}
                 type="button"
                 onClick={() => handlePreset(num)}
                 disabled={isSubmitting}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`w-12 h-12 flex items-center justify-center text-xs font-bold transition-all border ${
                   formData.guests === num 
-                    ? 'bg-[#b49164] text-white shadow-md scale-105' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-[#1a1a1a] text-white border-[#1a1a1a]' 
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-[#BC1E22]'
                 } disabled:opacity-50`}
               >
-                {num} Guests
+                {num}
               </button>
             ))}
-            <input
-              type="number"
-              name="guests"
-              min="1"
-              max="20"
-              value={formData.guests}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              className="w-20 px-3 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:bg-white disabled:opacity-50"
-            />
+            <div className="flex items-center space-x-2 border-b border-gray-200 ml-auto">
+              <span className="text-[10px] uppercase text-gray-400">Custom:</span>
+              <input
+                type="number"
+                name="guests"
+                min="1"
+                max="30"
+                value={formData.guests}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                className="w-12 bg-transparent py-2 text-center text-sm focus:outline-none"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Date and Time Selection */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 block ml-1">Date</label>
+            <label className="text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400 block">Dining Date</label>
             <input
               type="date"
               name="date"
@@ -180,78 +165,57 @@ const ReservationForm: React.FC = () => {
               value={formData.date}
               onChange={handleChange}
               disabled={isSubmitting}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all disabled:opacity-50"
+              className="w-full px-0 py-3 bg-transparent border-b border-gray-200 rounded-none focus:border-[#BC1E22] transition-all disabled:opacity-50"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 block ml-1">Time Slot</label>
+            <label className="text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400 block">Preferred Time</label>
             <select
               name="time"
               required
               value={formData.time}
               onChange={handleChange}
               disabled={isSubmitting}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all appearance-none disabled:opacity-50"
+              className="w-full px-0 py-3 bg-transparent border-b border-gray-200 rounded-none focus:border-[#BC1E22] transition-all appearance-none disabled:opacity-50"
             >
-              <option value="">Select a time</option>
-              <optgroup label="Lunch Service">
+              <option value="">Select Time</option>
+              <optgroup label="Lunch">
                 {LUNCH_SLOTS.map(slot => (
-                  <option key={slot.value} value={slot.value}>
-                    {slot.label} {slot.isPopular ? '🔥' : ''}
-                  </option>
+                  <option key={slot.value} value={slot.value}>{slot.label}</option>
                 ))}
               </optgroup>
-              <optgroup label="Dinner Service">
+              <optgroup label="Dinner">
                 {DINNER_SLOTS.map(slot => (
-                  <option key={slot.value} value={slot.value}>
-                    {slot.label} {slot.isPopular ? '🔥' : ''}
-                  </option>
+                  <option key={slot.value} value={slot.value}>{slot.label}</option>
                 ))}
               </optgroup>
             </select>
           </div>
         </div>
 
-        {/* Special Requests */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 block ml-1">Special Requests (Optional)</label>
+          <label className="text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400 block">Occasion / Requests</label>
           <textarea
             name="requests"
-            rows={3}
-            placeholder="Dietary restrictions, celebrations, or table preferences..."
+            rows={2}
+            placeholder="Anniversary, dietary restrictions, etc."
             value={formData.requests}
             onChange={handleChange}
             disabled={isSubmitting}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-all resize-none disabled:opacity-50"
+            className="w-full px-0 py-3 bg-transparent border-b border-gray-200 rounded-none focus:border-[#BC1E22] transition-all resize-none disabled:opacity-50 placeholder:text-gray-300"
           />
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center space-x-3 transition-all ${
+          className={`w-full py-5 font-bold text-xs tracking-[0.3em] uppercase transition-all shadow-lg ${
             isValid && !isSubmitting
-              ? 'bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-lg hover:shadow-xl translate-y-0 active:translate-y-1' 
+              ? 'bg-[#BC1E22] text-white hover:bg-[#a11a1d] translate-y-0 hover:-translate-y-1' 
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
         >
-          {isSubmitting ? (
-            <>
-              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>Processing...</span>
-            </>
-          ) : (
-            <>
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.768-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.16-.173.348-.217.462-.217.116 0 .231.001.332.005.109.004.258-.041.404.311.145.352.506 1.231.55 1.318.044.087.073.188.015.304-.058.116-.087.188-.174.289-.087.101-.184.225-.262.302-.087.087-.178.182-.077.357.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.088.275.073.376-.044.101-.117.434-.506.55-.68.116-.174.232-.145.391-.087.16.058 1.013.478 1.187.565.173.088.289.13.332.202.043.073.043.419-.101.825zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.435 5.174L2 22l4.957-1.3c1.465.798 3.136 1.245 4.908 1.343.045.003.089.005.135.005 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
-              </svg>
-              <span>Reserve via WhatsApp</span>
-            </>
-          )}
+          {isSubmitting ? 'Processing...' : 'Reserve via WhatsApp'}
         </button>
       </form>
     </div>

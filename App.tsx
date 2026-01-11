@@ -6,122 +6,150 @@ import { RESTAURANT_NAME, QUICK_PRESETS, POLICIES, HOURS } from './constants';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen bg-white">
       <Header />
       
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <img 
-              src="https://picsum.photos/id/42/1600/900" 
-              alt="Restaurant Ambiance" 
-              className="w-full h-full object-cover brightness-[0.4]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#faf9f6]"></div>
-          </div>
-          
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl text-white font-bold mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-700 serif">
-              Savor Every Moment
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-10 duration-1000">
-              Where culinary excellence meets timeless elegance. Join us for an unforgettable dining experience.
-            </p>
+      <main className="pt-24">
+        {/* Gallery Hero Section */}
+        <section className="relative px-6 py-12 max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="order-2 lg:order-1">
+              <span className="text-[#BC1E22] text-xs font-bold tracking-[0.4em] uppercase mb-4 block">Welcome to L'Ambroisie</span>
+              <h1 className="text-5xl md:text-7xl font-bold mb-8 luxury-heading leading-[1.1]">
+                Culinary <br /> Artistry & <br /> <span className="text-[#D4AF37]">Tradition</span>
+              </h1>
+              <p className="text-gray-500 text-lg max-w-md leading-relaxed mb-10 font-light italic">
+                Experience the pinnacle of modern oriental dining, where every dish tells a story of heritage and innovation.
+              </p>
+              <div className="flex space-x-6 items-center">
+                <div className="w-12 h-[1px] bg-[#D4AF37]"></div>
+                <span className="text-[10px] tracking-[0.3em] font-bold uppercase text-gray-400">Award Winning Bistro</span>
+              </div>
+            </div>
+            
+            <div className="order-1 lg:order-2 relative h-[450px] md:h-[600px] overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                alt="Luxury Dining" 
+                className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
+              />
+              <div className="absolute top-8 right-8 bg-white/90 backdrop-blur p-4 border border-[#D4AF37] hidden md:block">
+                <p className="text-[10px] tracking-[0.2em] font-bold uppercase text-[#BC1E22]">Signature Selection</p>
+                <p className="text-xs font-serif italic text-gray-600 mt-1">Premium Peking Duck</p>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Content Section */}
-        <section className="max-w-7xl mx-auto px-4 -mt-32 relative z-20">
-          <div className="grid lg:grid-cols-12 gap-8">
-            {/* Main Form Area */}
-            <div className="lg:col-span-8">
+        {/* Content Section with refined spacing */}
+        <section className="max-w-7xl mx-auto px-6 py-20 bg-gray-50/50">
+          <div className="grid lg:grid-cols-12 gap-16">
+            {/* Form Column */}
+            <div className="lg:col-span-7">
               <ReservationForm />
-              
-              {/* Presets Grid */}
-              <div className="mt-12">
-                <h3 className="text-2xl font-bold mb-6 serif text-gray-900">Experience Packages</h3>
-                <div className="grid sm:grid-cols-3 gap-6">
-                  {QUICK_PRESETS.map((preset) => (
-                    <div 
-                      key={preset.id}
-                      className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group"
-                    >
-                      <div className="text-3xl mb-4 group-hover:scale-110 transition-transform inline-block">
-                        {preset.icon}
-                      </div>
-                      <h4 className="font-bold text-gray-900">{preset.title}</h4>
-                      <p className="text-sm text-gray-500 mt-1">{preset.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            {/* Sidebar Information */}
-            <div className="lg:col-span-4 space-y-8">
-              {/* Hours Card */}
-              <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-50">
-                <h3 className="text-xl font-bold mb-6 flex items-center serif text-gray-900">
-                  <span className="mr-3">🕒</span> Dining Hours
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center pb-4 border-b border-gray-50">
-                    <span className="text-gray-500">Lunch</span>
-                    <span className="font-semibold text-gray-900">{HOURS.lunch}</span>
-                  </div>
-                  <div className="flex justify-between items-center pb-4 border-b border-gray-50">
-                    <span className="text-gray-500">Dinner</span>
-                    <span className="font-semibold text-gray-900">{HOURS.dinner}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Availability</span>
-                    <span className="text-green-600 font-medium">{HOURS.days}</span>
-                  </div>
+            {/* Information Column */}
+            <div className="lg:col-span-5 flex flex-col justify-center space-y-12">
+              <div className="border-l-2 border-[#BC1E22] pl-8">
+                <h3 className="text-2xl font-bold luxury-heading mb-4 text-[#1a1a1a]">The Oriental Standard</h3>
+                <p className="text-gray-500 font-light leading-relaxed">
+                  L'Ambroisie brings the renowned Oriental Group excellence to a modern bistro setting. Our commitment to quality ingredients and masterful technique remains unchanged.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-[10px] tracking-[0.3em] font-bold uppercase text-[#BC1E22] mb-4">Lunch Service</h4>
+                  <p className="text-sm font-medium text-gray-900">{HOURS.lunch}</p>
+                </div>
+                <div>
+                  <h4 className="text-[10px] tracking-[0.3em] font-bold uppercase text-[#BC1E22] mb-4">Dinner Service</h4>
+                  <p className="text-sm font-medium text-gray-900">{HOURS.dinner}</p>
                 </div>
               </div>
 
-              {/* Policy Card */}
-              <div className="bg-[#1a1a1a] text-white p-8 rounded-3xl shadow-lg">
-                <h3 className="text-xl font-bold mb-6 serif text-[#b49164]">Booking Policies</h3>
+              <div className="bg-white p-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-12 h-12 bg-[#D4AF37]/10 -mr-6 -mt-6 rounded-full"></div>
+                <h4 className="text-[10px] tracking-[0.3em] font-bold uppercase text-gray-400 mb-6">Reservation Policies</h4>
                 <ul className="space-y-4">
                   {POLICIES.map((policy, idx) => (
-                    <li key={idx} className="flex items-start text-sm text-gray-400">
-                      <span className="mr-3 mt-1 text-[#b49164]">•</span>
+                    <li key={idx} className="flex items-start text-[11px] text-gray-500 leading-relaxed uppercase tracking-wider">
+                      <span className="mr-3 text-[#BC1E22]">/</span>
                       {policy}
                     </li>
                   ))}
                 </ul>
               </div>
-
-              {/* Visual Decorative Card */}
-              <div className="relative rounded-3xl overflow-hidden h-64 group">
-                <img 
-                  src="https://picsum.photos/id/493/600/800" 
-                  alt="Wine selection" 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-6">
-                  <p className="text-[#b49164] text-xs font-bold uppercase tracking-widest mb-1">Fine Wine Selection</p>
-                  <h4 className="text-white font-bold text-lg serif">Award Winning Cellar</h4>
-                </div>
-              </div>
             </div>
+          </div>
+        </section>
+
+        {/* Signature Experiences - Gallery Grid */}
+        <section className="py-24 max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-[#D4AF37] text-[10px] font-bold tracking-[0.5em] uppercase">Discovery</span>
+            <h2 className="text-4xl font-bold luxury-heading mt-4">Curated Experiences</h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-10">
+            {QUICK_PRESETS.map((preset, idx) => (
+              <div key={preset.id} className="group cursor-pointer">
+                <div className="relative overflow-hidden aspect-[4/5] mb-6">
+                  <img 
+                    src={`https://picsum.photos/id/${100 + idx}/800/1000`}
+                    alt={preset.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                  <div className="absolute bottom-6 left-6 right-6 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    <p className="text-[10px] tracking-[0.3em] font-bold uppercase text-[#D4AF37] mb-2">Package {idx + 1}</p>
+                    <h4 className="text-2xl font-bold luxury-heading">{preset.title}</h4>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 uppercase tracking-widest leading-loose">
+                  {preset.description} — Perfect for {preset.guests} guests.
+                </p>
+              </div>
+            ))}
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-20 border-t border-gray-100 pt-12 text-center text-gray-400 text-sm">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="w-12 h-12 bg-[#b49164]/10 text-[#b49164] flex items-center justify-center rounded-lg mx-auto mb-6">
-            <span className="font-bold text-xl serif">A</span>
+      {/* Luxury Footer */}
+      <footer className="bg-[#1a1a1a] text-white py-20">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-16">
+          <div className="col-span-1">
+            <span className="text-xl font-bold tracking-[0.2em] luxury-heading text-[#D4AF37]">L'AMBROISIE</span>
+            <p className="text-gray-500 text-xs mt-6 leading-relaxed uppercase tracking-widest">
+              A concept by Oriental Group. <br />
+              Established 1991.
+            </p>
           </div>
-          <p className="mb-2">© 2024 {RESTAURANT_NAME}. All rights reserved.</p>
-          <div className="flex justify-center space-x-6 mt-6">
-            <a href="#" className="hover:text-gray-600 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-gray-600 transition-colors">Terms</a>
-            <a href="#" className="hover:text-gray-600 transition-colors">Contact</a>
+          
+          <div className="col-span-1">
+            <h5 className="text-[10px] tracking-[0.3em] font-bold uppercase text-white mb-8">Location</h5>
+            <address className="text-gray-500 text-xs not-italic leading-loose uppercase tracking-widest">
+              Level 2, Premium Wing <br />
+              The Gardens Mall <br />
+              Kuala Lumpur, Malaysia
+            </address>
+          </div>
+          
+          <div className="col-span-1">
+            <h5 className="text-[10px] tracking-[0.3em] font-bold uppercase text-white mb-8">Navigation</h5>
+            <div className="flex flex-col space-y-4 text-[10px] tracking-[0.2em] font-bold uppercase text-gray-500">
+              <a href="#" className="hover:text-white transition-colors">Reservations</a>
+              <a href="#" className="hover:text-white transition-colors">Private Dining</a>
+              <a href="#" className="hover:text-white transition-colors">Career Opportunities</a>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-[0.2em] font-bold uppercase text-gray-600">
+          <p>© 2024 ORIENTAL GROUP OF RESTAURANTS</p>
+          <div className="flex space-x-8 mt-4 md:mt-0">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
           </div>
         </div>
       </footer>
