@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { RESTAURANT_NAME } from '../constants';
+import { RESTAURANT_NAME } from '../constants.tsx';
 
 const Header: React.FC = () => {
   return (

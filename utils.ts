@@ -1,6 +1,6 @@
 
-import { ReservationData } from './types';
-import { RESTAURANT_NAME, RESTAURANT_WHATSAPP } from './constants';
+import { ReservationData } from './types.ts';
+import { RESTAURANT_NAME, RESTAURANT_WHATSAPP } from './constants.tsx';
 
 export const getTodayDateString = (): string => {
   const today = new Date();

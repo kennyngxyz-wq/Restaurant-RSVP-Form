@@ -1,8 +1,8 @@
 
 import React from 'react';
-import Header from './components/Header';
-import ReservationForm from './components/ReservationForm';
-import { RESTAURANT_NAME, QUICK_PRESETS, POLICIES, HOURS } from './constants';
+import Header from './components/Header.tsx';
+import ReservationForm from './components/ReservationForm.tsx';
+import { RESTAURANT_NAME, QUICK_PRESETS, POLICIES, HOURS } from './constants.tsx';
 
 const App: React.FC = () => {
   return (

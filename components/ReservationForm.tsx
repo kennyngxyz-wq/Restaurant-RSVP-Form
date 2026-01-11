@@ -1,8 +1,8 @@
 
 import React, { useState, useMemo } from 'react';
-import { ReservationData } from '../types';
-import { LUNCH_SLOTS, DINNER_SLOTS, WEBHOOK_URL } from '../constants';
-import { getTodayDateString, generateWhatsAppLink } from '../utils';
+import { ReservationData } from '../types.ts';
+import { LUNCH_SLOTS, DINNER_SLOTS, WEBHOOK_URL } from '../constants.tsx';
+import { getTodayDateString, generateWhatsAppLink } from '../utils.ts';
 
 const ReservationForm: React.FC = () => {
   const [formData, setFormData] = useState<ReservationData>({
